@@ -29,6 +29,18 @@ namespace ToDoList.Controllers
 
             return View(await tasks.AsNoTracking().ToListAsync());
         }
+        [HttpPost]
+        public IActionResult UpdateTaskStatus([FromBody] TaskUpdate taskUpdate)
+        {
+            var task = _context.ToDo.Find(taskUpdate.Id);
+            if (task != null)
+            {
+                task.IsCompleted = taskUpdate.IsCompleted;
+                _context.SaveChanges();
+            }
+
+            return Ok();
+        }
 
         // GET: ToDoes/Details/5
         public async Task<IActionResult> Details(int? id)

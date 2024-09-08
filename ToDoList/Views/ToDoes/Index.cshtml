@@ -29,7 +29,12 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsCompleted)
+                    @Html.CheckBoxFor(modelItem => item.IsCompleted,
+                    new
+                    {
+                        @class = "task-checkbox",
+                        data_id = item.Id
+                    })
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DueDate)
@@ -43,3 +48,31 @@
 }
     </tbody>
 </table>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+    document.querySelectorAll('.task-checkbox').forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            const taskId = this.getAttribute('data-id'); // Get task ID
+            const isCompleted = this.checked; // Get checkbox state (true/false)
+
+            // Send AJAX request to update the status
+            fetch(`/ToDoes/UpdateTaskStatus`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '@Html.AntiForgeryToken()'
+                },
+                body: JSON.stringify({ id: taskId, isCompleted: isCompleted })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Task updated successfully');
+                }
+                else {
+                    console.error('Task update failed');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
