@@ -22,7 +22,12 @@ namespace ToDoList.Controllers
         // GET: ToDoes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ToDo.ToListAsync());
+            var tasks = from t in _context.ToDo 
+                        select t;
+
+            tasks = tasks.OrderBy(t => t.DueDate);
+
+            return View(await tasks.AsNoTracking().ToListAsync());
         }
 
         // GET: ToDoes/Details/5
