@@ -11,6 +11,7 @@ namespace ToDoList.Models
         [Required]
         public string? Name { get; set; }
 
+        [Display(Name = "Done?")]
         public Boolean IsCompleted { get; set; }
 
         [Display(Name = "Due by")]
