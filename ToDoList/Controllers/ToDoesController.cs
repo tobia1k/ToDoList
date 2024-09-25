@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Data;
 using ToDoList.Models;
@@ -25,10 +26,20 @@ namespace ToDoList.Controllers
             var tasks = from t in _context.ToDo 
                         select t;
 
-            tasks = tasks.OrderBy(t => t.DueDate);
+            tasks = tasks.OrderBy(c => c.IsCompleted).ThenBy(t => t.DueDate);
 
             return View(await tasks.AsNoTracking().ToListAsync());
         }
+
+        // GET: _TaskListPartial
+        public IActionResult TaskListPartial()
+        {
+            var tasks = from t in _context.ToDo
+                        select t;
+            tasks = tasks.OrderBy(c => c.IsCompleted).ThenBy(t => t.DueDate);
+            return PartialView("_TaskListPartial", tasks);
+        }
+
         [HttpPost]
         public IActionResult UpdateTaskStatus([FromBody] TaskUpdate taskUpdate)
         {
